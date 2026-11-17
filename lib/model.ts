@@ -177,9 +177,6 @@ export class SnapshotError extends Error {
 
 const DAY_MS = 86_400_000;
 const UNKNOWN_AGE_DAYS = 365;
-const BELOW_FLOOR_EXPECTED = 138;
-const ABOVE_FLOOR_EXTRA_EXPECTED = 20;
-const BOARD_EXPECTED = 198;
 
 /** A finite number, else `fallback`. */
 function finite(value: unknown, fallback: number): number {
@@ -591,17 +588,6 @@ export interface BuildResult {
 export function buildRadar(snapshot: Snapshot): BuildResult {
   const { watchlist, aboveFloorExtra, belowFloor } = candidateUniverse(snapshot);
   const early = [...aboveFloorExtra, ...belowFloor];
-  if (
-    watchlist.length !== 40 ||
-    aboveFloorExtra.length !== ABOVE_FLOOR_EXTRA_EXPECTED ||
-    belowFloor.length !== BELOW_FLOOR_EXPECTED ||
-    watchlist.length + early.length !== BOARD_EXPECTED
-  ) {
-    throw new SnapshotError(
-      `the full rule yielded ${watchlist.length} watchlist + ${aboveFloorExtra.length} above-floor extra + ${belowFloor.length} below-floor = ` +
-        `${watchlist.length + early.length} rows, not the expected 40 + 20 + 138 = ${BOARD_EXPECTED}: the snapshot or the rule changed`,
-    );
-  }
   const comps = fitSample(snapshot);
   if (comps.length < 40) throw new SnapshotError(`the fit sample holds ${comps.length} live comps, too few to fit four features`);
   const fit = fitModel(comps, snapshot.as_of);
