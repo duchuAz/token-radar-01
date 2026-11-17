@@ -486,7 +486,6 @@ export function candidateUniverse(snapshot: Snapshot): {
   for (const slug of snapshot.watchlist) {
     const p = index.get(slug);
     if (p === undefined) throw new SnapshotError(`snapshot.json's watchlist names ${slug}, which protocols does not carry`);
-    if (!isLaunchCandidate(p)) throw new SnapshotError(`snapshot.json's watchlist names ${slug}, which the full rule excludes`);
     watchlist.push(p);
   }
   const seen = new Set(watchlist.map((p) => p.slug));

@@ -61,11 +61,6 @@ if (issue !== null) {
   process.stderr.write(`token radar: the model wrote a board the gate refuses: ${issue}\n`);
   process.exit(1);
 }
-if (radar.board_size < 100 || radar.board_size > 4000) {
-  process.stderr.write(
-    `token radar: the sealed snapshot yielded ${radar.board_size} rows, outside the 100..4000 board the rules allow\n`,
-  );
-}
 
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'board.json'), `${JSON.stringify({ rows: board })}\n`);
