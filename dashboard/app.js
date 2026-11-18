@@ -155,7 +155,8 @@
     }
     var head = [
       ['rank', '#'], ['name', 'Protocol'], ['tvl', 'TVL'], ['growth', '7d'],
-      ['age', 'Age'], ['implied', 'Implied value'], ['multiple', 'Multiple'], ['farm', 'Farm budget']
+      ['age', 'Age'], ['implied', 'Implied value'], ['multiple', 'Multiple'], ['farm', 'Farm plan'],
+      ['net', 'Net 10/25/50%'], ['verdict', 'Verdict']
     ].map(function (h) {
       var active = state.sort === h[0];
       var aria = active ? (state.dir === 'asc' ? 'ascending' : 'descending') : 'none';
@@ -165,6 +166,12 @@
       var f = r.farm;
       var be = f ? f.break_even_pct.toFixed(1) : '—';
       var pos = f ? '$' + f.position_usd : '—';
+      var plan = f ? r.farm_steps.length + 'st·$' + f.total_cost_usd.toFixed(2) + '·' + f.hold_days + 'd' : '—';
+      var nets = f ? '$' + Math.round(f.net_10_usd) + '/' + Math.round(f.net_25_usd) + '/' + Math.round(f.net_50_usd) : '—';
+      var v = !f ? ['—', 'v-skip', 'no farm plan']
+        : f.net_10_usd > 0 ? ['FARM', 'v-farm', 'a 10% airdrop pays: net $' + Math.round(f.net_10_usd) + ' after $' + f.total_cost_usd.toFixed(2) + ' cost']
+        : f.net_25_usd > 0 ? ['MARGINAL', 'v-marginal', 'needs a 25% airdrop: net $' + Math.round(f.net_25_usd)]
+        : ['SKIP', 'v-skip', 'not paid even at a 50% airdrop'];
       return '<tr tabindex="0" data-slug="' + esc(r.slug) + '" data-rank="' + r.rank + '">' +
         '<td class="rk rank num">' + r.rank + '</td>' +
         '<td><span class="pname">' + esc(r.name) + '</span><span class="pmeta">' +
@@ -175,7 +182,9 @@
         '<td class="r num">' + (r.age_days == null ? '—' : r.age_days + 'd') + '</td>' +
         '<td class="r"><span class="imp">' + moneyExact(r.implied_value_usd) + '</span>' + rangeBar(r) + '</td>' +
         '<td class="r num">' + fixed(r.implied_value_usd / r.tvl_usd, 2) + '×</td>' +
-        '<td class="farmcell"><b>' + pos + '</b> · B/E ' + be + '%</td>' +
+        '<td class="farmcell"><b>' + pos + '</b> · B/E ' + be + '%<span class="plan">' + plan + '</span></td>' +
+        '<td class="r netcell">' + nets + '</td>' +
+        '<td><span class="vchip ' + v[1] + '" title="' + v[2] + '">' + v[0] + '</span></td>' +
         '</tr>';
     }).join('');
     return '<div class="tablewrap"><table class="board"><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table></div>';
