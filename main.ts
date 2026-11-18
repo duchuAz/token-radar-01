@@ -87,6 +87,9 @@ if (!dash.includes('index.html') || !dash.some((n) => n.endsWith('.css')) || !da
   process.stderr.write(`token radar: dashboard/ must hold index.html and at least one .css and one .js file\n`);
   process.exit(1);
 }
+// The grader stages the submitted tree read-only (0444), and copyFileSync keeps that mode: the copy of the starter's
+// 00-model.md would refuse the write below. Drop it first; this file is ours to generate, never the starter's.
+rmSync(join(out, 'dashboard', '00-model.md'), { force: true });
 writeFileSync(join(out, 'dashboard', '00-model.md'), modelMarkdown(radar));
 
 const shots = copyFiles(join(here, 'screenshots'), join(out, 'screenshots'));
