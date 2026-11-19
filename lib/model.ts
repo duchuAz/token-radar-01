@@ -16,7 +16,7 @@
 //   x4 = min(chains.length, 8) / 8
 //
 // A robust OLS (normal equations + Gaussian elimination, then 3 Huber IRLS rounds) gives the fitted log
-// multiple; a shrunk median residual per category (n / (n + 8), clamped to [-1, 1]) is the partially
+// multiple; a shrunk median residual per category (n / (n + 64), clamped to [-1, 1]) is the partially
 // pooled category effect. pred = fitted + category adjustment; multiple = 10^pred clamped to
 // [0.02, 8]; implied_value_usd = max(1, round(tvl_usd * multiple)).
 //
@@ -294,7 +294,7 @@ function dot(row: number[], coef: number[]): number {
   return sum;
 }
 
-/** Per-category residuals from a training fit, shrunk n/(n+8) and clamped to [-1, 1]. */
+/** Per-category residuals from a training fit, shrunk n/(n+64) and clamped to [-1, 1]. */
 export function categoryAdjustments(cats: string[], residuals: number[]): Map<string, { adj: number; n: number; median: number }> {
   const groups = new Map<string, number[]>();
   for (let i = 0; i < cats.length; i++) {
@@ -306,7 +306,7 @@ export function categoryAdjustments(cats: string[], residuals: number[]): Map<st
   for (const [category, list] of groups) {
     const median = quantile(ascending(list), 0.5);
     const n = list.length;
-    out.set(category, { adj: clamp((median * n) / (n + 8), -1, 1), n, median });
+    out.set(category, { adj: clamp((median * n) / (n + 64), -1, 1), n, median });
   }
   return out;
 }
@@ -829,7 +829,7 @@ by ordinary least squares through the normal equations and Gaussian elimination,
 | --- | --- |
 ${coefs}
 
-Each category's median residual (actual minus fitted) is shrunk by n/(n+8) and clamped to [-1, 1]: a partially pooled category effect that vanishes for a category with no comps. Then
+Each category's median residual (actual minus fitted) is shrunk by n/(n+64) and clamped to [-1, 1]: a partially pooled category effect that vanishes for a category with no comps. Then
 
     multiple          = clamp(10^(fitted + category adjustment), 0.02, 8)
     implied_value_usd = max(1, round(tvl_usd x multiple))

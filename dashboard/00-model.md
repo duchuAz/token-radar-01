@@ -25,7 +25,7 @@ by ordinary least squares through the normal equations and Gaussian elimination,
 | log10(1 + age/365) | -0.619 |
 | chains / 8 | -0.187 |
 
-Each category's median residual (actual minus fitted) is shrunk by n/(n+8) and clamped to [-1, 1]: a partially pooled category effect that vanishes for a category with no comps. Then
+Each category's median residual (actual minus fitted) is shrunk by n/(n+64) and clamped to [-1, 1]: a partially pooled category effect that vanishes for a category with no comps. Then
 
     multiple          = clamp(10^(fitted + category adjustment), 0.02, 8)
     implied_value_usd = max(1, round(tvl_usd x multiple))

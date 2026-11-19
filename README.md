@@ -31,7 +31,7 @@ the same snapshot write byte-identical output.
   wrapped/staked names and CEX products are dropped by the same rule.
 - **Model.** `y = log10(mcap / TVL)` on 102 live comps, winsorized at p1/p99, against log10 TVL, the
   clamped seven-day change, log10(1 + age/365) and chains/8. OLS normal equations, three Huber IRLS
-  rounds, then a shrunk median residual per category (`n/(n+8)`, clamped to [-1, 1]). Every row's
+  rounds, then a shrunk median residual per category (`n/(n+64)`, clamped to [-1, 1]). Every row's
   implied value is `TVL x 10^(fit + category adj)`, clamped to [0.02, 8], never a hard-coded name.
 - **Validation.** Five deterministic folds (`fnv1a(slug) % 5`), out-of-fold MAE 0.551 log10, R2 0.288,
   80% interval coverage 76.5%, Spearman rank IC 0.516, calibration slope 0.899.
